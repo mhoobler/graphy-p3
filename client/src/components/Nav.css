@@ -1,0 +1,50 @@
+nav{
+    background-color: #2f2fcf !important;
+    display: flex;
+    font-size: calc(10px + 2vmin);
+}
+
+a {
+    float:right;
+    color: white;
+    text-decoration: none;
+}
+
+a::before {
+    content: " ";
+    white-space: pre;
+}
+a::after{
+    content: " |";
+}
+
+a:first-clid::after{
+    content: "";
+}
+
+a:last-child::after{
+    content: " ";
+    white-space: pre;
+}
+
+a:hover{
+    color: white;
+    text-decoration: underline;
+}
+
+a.logo-container:hover{
+    border-bottom: 1px solid black;
+    text-decoration: none;
+}
+
+a.logo-container:after{
+    content: "";
+}
+
+.App-logo {
+    text-decoration: none;
+    float:left;
+    animation: App-logo-spin infinite 20s linear;
+    height: 5vmin;
+    pointer-events: none;
+  }
