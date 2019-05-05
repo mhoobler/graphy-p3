@@ -30,7 +30,10 @@ class SignIn extends Component {
 
     handleFormSubmit = event => {
         event.preventDefault();
-        console.log("Email: " + this.state.email + " Password: " + this.state.password);
+        if(this.state.foo){
+            API.apiSignup()
+            .then()
+        }
     };
     
     tester = () => {

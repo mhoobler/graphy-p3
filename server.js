@@ -47,6 +47,9 @@ app.get("*", function(req, res) {
 
 var syncOptions = { force: false };
 
+// reset tables
+//let syncOptions = { force: process.env.NODE_ENV === 'development' ? true : false };
+
 if (process.env.NODE_ENV === "test") {
   syncOptions.force = true;
 }
