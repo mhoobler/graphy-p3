@@ -11,11 +11,13 @@ export default {
     // TESTS
 
     // USER
-    apiSignup: () => {
-        return axios.get('/_api/signup');
+    apiSignup: (data) => {
+        console.log(data);
+        return axios.post('/_api/signup', data);
     },
-    apiSignin: () => {
-        return axios.get('/_api/signin');
+    apiSignin: (data) => {
+        console.log("signin");
+        return axios.post('/_api/signin', data);
     },
     //USER
 

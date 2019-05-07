@@ -1,19 +1,21 @@
 const db = require('../models');
-const passport = require('passport');
 const https = require('https');
 
-module.exports = (app) => {
+module.exports = (app, passport) => {
     //TEST AREA
     app.get('/api/test', (req, res) => {
         res.json(true);
     })
 
     app.get('/getUser', function (req, res) {
-        db.User.findAll({})
-        .then(function(dbUser) {
-            console.log(dbUser);
-            res.json(dbUser);
-        })
+        if (req.isAuthenticated()) {
+            db.User.findByPk(req.user.id).then(function(dbUser) {
+              console.log(dbUser);
+              res.json(dbUser);
+            })
+        } else {
+            res.json(null);
+        }
     });
     //TEST AREA
 
@@ -51,17 +53,42 @@ module.exports = (app) => {
     })
 
     //User routes
-    app.post('/_api/signin', passport.authenticate('local-signin',
-        {
-            successRedirect: '/user',
-            failureRedirect: '/signin'
+    app.post('/_api/signin', passport.authenticate('local-signin'),
+        function(req, res){
+            // console.log(req);
+            // console.log(res.id);
+            // req.user comes from passport
+            if(req.user){
+                let temp = {};
+                // a secure way to filter your object properties
+                // only expose what you need to expose
+                temp.email = req.user.email;
+                temp.id = req.user.id;
+                res.json(temp);
+            }
+            else{
+                res.json(false);
+            }
         }
-    ));
+    );
 
-    app.post('/_api/signup', passport.authenticate('local-signup', 
-        {
-            successRedirect: '/user',
-            failureRedirect: '/signup'
+    app.post('/_api/signup', passport.authenticate('local-signup'), 
+    function(req, res){
+        // console.log(req);
+        // console.log(res);
+        // req.user comes from passport
+        if(req.user){
+            let temp = {};
+            // a secure way to filter your object properties
+            // only expose what you need to expose
+            temp.email = req.user.email;
+            temp.id = req.user.id;
+            res.json(temp);
         }
-    ));
+        else{
+            res.json(false);
+        }
+
+    }
+    );
 }

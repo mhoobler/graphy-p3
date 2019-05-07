@@ -7,15 +7,10 @@ class SignIn extends Component {
         super(props);
         this.state = {
             email: "",
-            password: "",
-            foo: false
+            password: ""
         };
     }
     componentDidMount() {
-        this.setState({
-            foo: this.props.foo
-        })
-        console.log(this.state.foo);
         API.apiTest()
         .then( (res) => console.log(res))
         .catch( (err) => console.log(err));
@@ -30,14 +25,19 @@ class SignIn extends Component {
 
     handleFormSubmit = event => {
         event.preventDefault();
-        if(this.state.foo){
-            API.apiSignup()
-            .then()
+        if(this.state.email && this.state.password){
+            API.apiSignin({email: this.state.email, password: this.state.password})
+            .then(res => {
+                console.log(res);
+                this.props.setUser(res.data);
+            })
+            .catch(err => console.log(err));
         }
     };
     
-    tester = () => {
-        console.log(this.state.foo);
+    tester = event => {
+        event.preventDefault();
+        console.log(this.props.user);
     }
 
     render() {
@@ -46,7 +46,7 @@ class SignIn extends Component {
 <div className="clogin">
 
     <form className="form-group form-signin">
-        {this.state.foo ? (<h1 className="h3 mb-3 font-weight-normal centersignin">Signin</h1>) : (<h1 className="h3 mb-3 font-weight-normal centersignin">Signin2</h1>)}
+        {this.props.newUser ? (<h1 className="h3 mb-3 font-weight-normal centersignin">Sign Up</h1>) : (<h1 className="h3 mb-3 font-weight-normal centersignin">Sign In</h1>)}
         <label htmlFor="inputEmail" className="sr-only">Email address</label>
         <input onChange={this.handleInputChange} type="text" id="inputEmail" className="form-control" name="email" placeholder="Email address" required autoFocus />
         <label htmlFor="inputPassword" className="sr-only">Password</label>

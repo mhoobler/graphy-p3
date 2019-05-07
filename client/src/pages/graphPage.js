@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import Modal from '../components/Modal';
-import Chart from '../components/Chart';
+import ChartComp from '../components/ChartComp';
 
 import API from '../utils/API';
 
 class GraphPage extends Component {
     constructor(props) {
         super(props);
+        this.changeSetting = this.changeSetting.bind(this);
 
         this.state = {
-            search_term: ""
+            setting: "highLow",
+            search_term: "",
+            obj: null
         }
     }
 
@@ -31,7 +34,6 @@ class GraphPage extends Component {
     handleFormSubmit = event => {
         event.preventDefault();
         console.log(this.state.search_term);
-        var resObj = null;
 
         //Check for ticker
         API.apiTicker(this.state.search_term)
@@ -40,7 +42,16 @@ class GraphPage extends Component {
                 console.log(result.data[0]);
                 //Make AlphaApi Call
                 API.apiAlpha(result.data[0].symbol)
-                .then(result => console.log(result))
+                .then(result => {
+                    console.log(result)
+                    this.setState({
+                        obj: {
+                            keys: Object.keys(result.data["Time Series (Daily)"]),
+                            data: result.data["Time Series (Daily)"]
+                        }
+                    })
+                    console.log(this.state);
+                })
                 .catch(err => console.log(err));
             }else{
                 //Check for name
@@ -61,10 +72,30 @@ class GraphPage extends Component {
         }).catch(err => console.log(err));
     }
 
+    changeSetting = event => {
+        event.preventDefault();
+        // console.log(this.props);
+        if(this.state.setting === "highLow"){
+            this.setState({setting: "openClose"});
+        } else {
+            this.setState({setting: "highLow"});
+        }
+        console.log(this.state);
+        console.log(this.props);
+    }
+
     render() {
+        let chart;
+
+        if(this.state.obj === null){
+            chart = <p>Chart will appear here after search.</p>
+        } else {
+            chart = <ChartComp obj={this.state.obj} setting={this.state.setting} key={this.state.setting} foo="test"/>
+        }
+
         return (
             <div className="container">
-                <Chart foo="test"/>
+                {chart}
                 {/* <!-- Here we create an HTML Form for handling the inputs--> */}
                 <form>
 
@@ -76,7 +107,7 @@ class GraphPage extends Component {
 
                     {/* <!-- Here we have our final submit button --> */}
                     <button onClick={this.handleFormSubmit} type="submit" className="btn btn-default hvr-push" id="run-search" >Search</button>
-
+                    <button onClick={this.changeSetting}>Change Setting</button>
                 </form>
                 <Modal />
             </div>

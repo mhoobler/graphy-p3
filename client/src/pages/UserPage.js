@@ -3,7 +3,7 @@ import API from '../utils/API';
 import './pages.css';
 
 
-class About extends Component {
+class UserPage extends Component {
 
     componentDidMount() {
         API.apiUser()
@@ -24,4 +24,4 @@ class About extends Component {
     }
 }
 
-export default About;
+export default UserPage;

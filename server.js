@@ -10,6 +10,10 @@ app.use(session({ secret: 'keyboard cat', resave: true, saveUninitialized: true 
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
+// Middleware
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 var db = require("./models");
 
 // Serve up static assets (usually on heroku)
@@ -28,9 +32,9 @@ app.get("/api/cached", (req, res) => {
     res.json({ random: Math.random() });
 });
 
-require('./config/passport.js')(passport, db.User);
-
 require('./routes/api-routes.js')(app, passport);
+
+require('./config/passport.js')(passport, db.User);
 
 // Send every request to the React app
 // Define any API routes before this runs

@@ -4,11 +4,11 @@ import './App.css';
 
 import Nav from './components/Nav';
 
-import Home from './pages/home';
-import About from './pages/about';
+import Home from './pages/Home';
+import UserPage from './pages/UserPage';
 import Projects from './pages/projects';
-import SignIn from './pages/signin';
-import GraphPage from './pages/graphPage';
+import SignIn from './pages/Signin';
+import GraphPage from './pages/GraphPage';
 
 class App extends Component {
   state = {
@@ -24,14 +24,14 @@ class App extends Component {
   render() {
     const App = () => (
       <div>
-        <Nav />
+        <Nav user={this.state.user} />
         <Switch>
           <Route exact path='/' component={Home}/>
-          <Route exact path='/about' component={About}/>
+          <Route exact path='/user' component={UserPage}/>
           <Route exact path='/projects' component={Projects}/>
-          <Route exact path='/signin' component={() => <SignIn foo={false} /> } />
-          <Route exact path='/signup' component={() => <SignIn foo={true} /> } />
-          <Route exact path='/graph' component={GraphPage} />
+          <Route exact path='/signin' render={() => <SignIn {...this.props} setUser={this.setUser} user={this.state.user} newUser={false} /> } />
+          <Route exact path='/signup' render={() => <SignIn {...this.props} setUser={this.setUser} user={this.state.user} newUser={true} /> } />
+          <Route exact path='/graphs' component={GraphPage} />
         </Switch>
       </div>
     )
