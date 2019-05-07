@@ -2,7 +2,9 @@ const express = require("express");
 const path = require("path");
 const PORT = process.env.PORT || 3001;
 const app = express();
+const mongoose = require("mongoose");
 
+//Passport
 var passport = require("passport");
 var session = require("express-session");
 
@@ -32,8 +34,11 @@ app.get("/api/cached", (req, res) => {
     res.json({ random: Math.random() });
 });
 
+//Api routes
+require('./routes/mongo-routes.js')(app);
 require('./routes/api-routes.js')(app, passport);
 
+//Passport strategies
 require('./config/passport.js')(passport, db.User);
 
 // Send every request to the React app
@@ -50,6 +55,8 @@ app.get("*", function(req, res) {
 });
 
 var syncOptions = { force: false };
+
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/reactreadinglist2", {useNewUrlParser: true});
 
 // reset tables
 //let syncOptions = { force: process.env.NODE_ENV === 'development' ? true : false };

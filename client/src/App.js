@@ -31,7 +31,7 @@ class App extends Component {
           <Route exact path='/projects' component={Projects}/>
           <Route exact path='/signin' render={() => <SignIn {...this.props} setUser={this.setUser} user={this.state.user} newUser={false} /> } />
           <Route exact path='/signup' render={() => <SignIn {...this.props} setUser={this.setUser} user={this.state.user} newUser={true} /> } />
-          <Route exact path='/graphs' component={GraphPage} />
+          <Route exact path='/graphs' render={() => <GraphPage {...this.props} user={this.state.user} />} />
         </Switch>
       </div>
     )

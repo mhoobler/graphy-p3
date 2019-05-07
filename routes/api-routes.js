@@ -1,13 +1,17 @@
 const db = require('../models');
+const mongodb = require('../mongoModels');
 const https = require('https');
 
 module.exports = (app, passport) => {
     //TEST AREA
     app.get('/api/test', (req, res) => {
-        res.json(true);
+        // res.json(true);
+        mongodb.Book.find({})
+        .then(result => res.json(result))
+        .catch(err => res.status(422).json(err))
     })
 
-    app.get('/getUser', function (req, res) {
+    app.get('/getUser', (req, res) => {
         if (req.isAuthenticated()) {
             db.User.findByPk(req.user.id).then(function(dbUser) {
               console.log(dbUser);
@@ -20,30 +24,30 @@ module.exports = (app, passport) => {
     //TEST AREA
 
     // search for company name by stock symbol
-    app.get('/api/tickers/:term', function (req, res) {
+    app.get('/api/tickers/:term', (req, res) => {
         db.Stock_master.findAll({ where: { symbol: req.params.term } })
-        .then(function (dbStock) {
+        .then((dbStock) => {
+            dbStock.user = "test";
             res.json(dbStock);
         });
     })
     //search for company name by search term
-    app.get('/api/search/:term', function (req, res) {
+    app.get('/api/search/:term', (req, res) => {
         db.Stock_master.findAll({ where: { search_term: req.params.term } })
-        .then(function (dbStock) {
+        .then((dbStock) => {
             res.json(dbStock);
         });
     });
 
     //api call for alphavantage
-    app.get('/api/alpha/:term', function (req, res) {
+    app.get('/api/alpha/:term', (req, res) => {
+        let data = '';
+        
         https.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=' + req.params.term + '&apikey=' + process.env.stocksKey,
         (result) => {
-            let data = '';
-
-            result.on('data', (chunk) => { 
-                data += chunk;
+            result.on('data', (stockData) => { 
+                data += stockData;
             });
-
             result.on('end', () => {
                 res.type('json');
                 res.end(data);

@@ -1,14 +1,13 @@
-// const mongoose = require("mongoose");
-// const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-// const savedChartsSchema = new Schema({
-//   symbol: { type: String, required: true },
-//   author: { type: Array },
-//   user_id: Number,
-//   img: String,
-//   date: { type: Date, default: Date.now }
-// });
+const savedChartsSchema = new Schema({
+  symbol: { type: String, required: true },
+  data: { type: String },
+  user_id: Number,
+  date: { type: String }
+});
 
-// const SavedCharts = mongoose.model("SavedCharts", savedSchema);
+const SavedCharts = mongoose.model("SavedCharts", savedChartsSchema);
 
-// module.exports = SavedCharts;
+module.exports = SavedCharts;

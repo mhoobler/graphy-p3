@@ -1,21 +1,11 @@
 import React, { Component } from 'react';
 import { Chart } from 'react-google-charts';
 
-const chartEvents = [
-    {
-      eventName: "select",
-      callback({ chartWrapper }) {
-        console.log("Selected ", chartWrapper.getChart().getSelection());
-      }
-    }
-  ];
-
 class ChartComp extends Component {
     constructor(props){
         super(props);
 
         this.state = {
-            obj: null,
             setting: "",
             //react-google-charts settings
             options: {
@@ -35,6 +25,18 @@ class ChartComp extends Component {
                 {type: "string", label: "day"},
                 {type: "number", label: "high"},
                 {type: "number", label: "low"}
+            ],
+            chartEvents: [
+                {
+                    eventName: "select",
+                    callback({ chartWrapper }) {
+                        let x = chartWrapper.getChart().getSelection()
+        
+                        console.log("Selected ", x[0]);
+                        props.handleShow(x[0], props.setting);
+                    }
+
+                }
             ]
         }
         
@@ -43,47 +45,32 @@ class ChartComp extends Component {
     componentDidMount() {
         let tempRows = [];
         let tempCol = [];
-        let keys = this.props.obj.keys;
-        // console.log(this.props);
-        // switch(this.state.setting){
-        //     case "highLow":
-        //         for(let i=0; i < this.props.obj.keys.length; i++){
-        //             tempRows.unshift([keys[i], this.props.obj.data[keys[i]]["2. high"], this.props.obj.data[keys[i]]["3. low"]]);
-        //         }
-        //         break;
-        //     case "openClose":
-        //         for(let i=0; i < this.props.obj.keys.length; i++){
-        //             tempRows.unshift([keys[i], this.props.obj.data[keys[i]]["1. open"], this.props.obj.data[keys[i]]["4. close"]]);
-        //         }
-        //         break;
-        //     default:
-        //         console.log("Error with chart 'setting'");
-        // }
+        let keys = this.props.graphInfo.keys;
         
-        if(this.props.setting === "highLow"){
-            for(let i=0; i < this.props.obj.keys.length; i++){
-                tempRows.unshift([keys[i], this.props.obj.data[keys[i]]["2. high"], this.props.obj.data[keys[i]]["3. low"]]);
+        if(this.props.setting[0] === "high"){
+            for(let i=0; i < this.props.graphInfo.keys.length; i++){
+                tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["2. high"], this.props.graphInfo.data[keys[i]]["3. low"]]);
             };
             tempCol = [
                 {type: "string", label: "day"},
-                {type: "number", label: "high"},
-                {type: "number", label: "low"}
+                {type: "number", label: this.props.setting[0]},
+                {type: "number", label: this.props.setting[1]}
             ];
         } else {
-            for(let i=0; i < this.props.obj.keys.length; i++){
-                tempRows.unshift([keys[i], this.props.obj.data[keys[i]]["1. open"], this.props.obj.data[keys[i]]["4. close"]]);
+            for(let i=0; i < this.props.graphInfo.keys.length; i++){
+                tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["1. open"], this.props.graphInfo.data[keys[i]]["4. close"]]);
             };
             tempCol = [
                 {type: "string", label: "day"},
-                {type: "number", label: "open"},
-                {type: "number", label: "close"}
+                {type: "number", label: this.props.setting[0]},
+                {type: "number", label: this.props.setting[1]}
             ];
         }
 
         this.setState({
             setting: this.props.setting,
             options:{
-                title: this.props.foo
+                title: this.props.graphInfo.symbol
             },
             rows: tempRows,
             columns: tempCol
@@ -94,13 +81,13 @@ class ChartComp extends Component {
         return (
             <div> {this.props.setting}
             <Chart
-                chartType="Line"
+                chartType="LineChart"
                 rows={this.state.rows}
                 columns={this.state.columns}
                 options={this.state.options}
                 width="100%"
                 height="400px"
-                chartEvents={chartEvents}
+                chartEvents={this.state.chartEvents}
             />
             </div>
         )

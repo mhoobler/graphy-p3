@@ -6,7 +6,7 @@ import './pages.css';
 class UserPage extends Component {
 
     componentDidMount() {
-        API.apiUser()
+        API.getUser()
         .then( (res) => console.log(res))
         .catch( (err) => console.log(err));
     }

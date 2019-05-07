@@ -5,7 +5,7 @@ export default {
     apiTest: () => {
         return axios.get('/api/test');
     },
-    apiUser: () => {
+    getUser: () => {
         return axios.get('/getUser');
     },
     // TESTS
@@ -30,5 +30,11 @@ export default {
     },
     apiAlpha: (term) => {
         return axios.get('/api/alpha/' + term);
+    },
+    getPins: (symbol) => {
+        return axios.get('/api/pin/'+ symbol);
+    },
+    postPin: (data) => {
+        return axios.post('/api/pin', data);
     }
 }
