@@ -26,18 +26,27 @@ class SignIn extends Component {
     handleFormSubmit = event => {
         event.preventDefault();
         if(this.state.email && this.state.password){
-            API.apiSignin({email: this.state.email, password: this.state.password})
-            .then(res => {
-                console.log(res);
-                this.props.setUser(res.data);
-            })
-            .catch(err => console.log(err));
+            if(this.props.newUser){
+                API.apiSignup({email: this.state.email, password: this.state.password})
+                .then(res => {
+                    console.log(res);
+                    this.props.setUser(res.data);
+                })
+                .catch(err => console.log(err));
+            }else {
+                API.apiSignin({email: this.state.email, password: this.state.password})
+                .then(res => {
+                    console.log(res);
+                    this.props.setUser(res.data);
+                })
+                .catch(err => console.log(err));
+            }
         }
     };
     
     tester = event => {
         event.preventDefault();
-        console.log(this.props.user);
+        console.log(this.props);
     }
 
     render() {

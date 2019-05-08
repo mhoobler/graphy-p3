@@ -6,7 +6,7 @@ import Nav from './components/Nav';
 
 import Home from './pages/Home';
 import UserPage from './pages/UserPage';
-import Projects from './pages/projects';
+import Projects from './pages/Projects';
 import SignIn from './pages/Signin';
 import GraphPage from './pages/GraphPage';
 
