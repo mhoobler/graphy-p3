@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Card from'react-bootstrap/Card';
 
 import ChartComp from '../components/ChartComp';
 // import ChartTest from '../components/ChartTest';
 
 import API from '../utils/API';
+import './pages.css'
 
 // function orderPins(arr){
 //     var date = function(y, m, d){
@@ -52,13 +54,21 @@ class GraphPage extends Component {
     }
     
     handleShow(obj, setting, notes) {
-        console.log(setting);
+    if(this.state.graphInfo !== null){
+
+        console.log({
+            object: obj,
+            settings: setting,
+            notes: notes
+        });
         let date = this.state.graphInfo.keys[obj.row];
         let values = this.state.graphInfo.data[date];
-        let maybeNull = null;
+        let title = null;
+        let body = null;
 
         if(notes){
-            maybeNull = notes;
+            title = notes.title;
+            body = notes.body;
         }
 
         if(obj){
@@ -70,7 +80,8 @@ class GraphPage extends Component {
                             date: date,
                             value: values["2. high"],
                             string: "daily high",
-                            notes: maybeNull
+                            title: title,
+                            body: body
                         },
                         show: true 
                     });
@@ -80,7 +91,8 @@ class GraphPage extends Component {
                             date: date,
                             value: values["3. low"],
                             string: "daily low",
-                            notes: maybeNull
+                            title: title,
+                            body: body
                         },
                         show: true 
                     });
@@ -93,7 +105,8 @@ class GraphPage extends Component {
                             date: date,
                             value: values["1. open"],
                             string: "opening",
-                            notes: maybeNull
+                            title: title,
+                            body: body
                         },
                         show: true 
                     });
@@ -103,7 +116,8 @@ class GraphPage extends Component {
                             date: date,
                             value: values["4. close"],
                             string: "closing",
-                            notes: maybeNull
+                            title: title,
+                            body: body
                         },
                         show: true 
                     });
@@ -113,6 +127,11 @@ class GraphPage extends Component {
         } else {
             this.setState({ show: true });
         }
+    } else{
+        this.setState({ 
+            show: true 
+        });
+    }
     }
 
     componentDidMount() {
@@ -175,14 +194,16 @@ class GraphPage extends Component {
             if(!this.props.user){
                 sending = {
                     symbol: this.state.graphInfo.symbol,
-                    data: this.state.modalInput,
+                    title: this.state.modalInputTitle,
+                    body: this.state.modalInputBody,
                     user_id: 0,
                     date: this.state.modalValues.date
                 }
             } else {
                 sending = {
                     symbol: this.state.graphInfo.symbol,
-                    data: this.state.modalInput,
+                    title: this.state.modalInputTitle,
+                    body: this.state.modalInputBody,
                     user_id: this.props.user.id,
                     date: this.state.modalValues.date
                 }
@@ -209,7 +230,10 @@ class GraphPage extends Component {
 
     tester = event => {
         event.preventDefault();
-        console.log(this.state);
+        console.log({
+            STATE: this.state,
+            PROPS: this.props
+        });
     }
 
     mongo = (alpha) => {
@@ -249,7 +273,7 @@ class GraphPage extends Component {
         if(this.state.graphInfo === null){
             chart = <ChartComp handleShow={this.handleShow} setting={this.state.setting}/>
         } else {
-            chart = <ChartComp graphInfo={this.state.graphInfo} handleShow={this.handleShow} setting={this.state.setting} key={this.state.setting}/>
+            chart = <ChartComp graphInfo={this.state.graphInfo} handleShow={this.handleShow} setting={this.state.setting} key={this.state.graphInfo.symbol}/>
         }
 
         if(this.state.modalValues === null){
@@ -259,13 +283,13 @@ class GraphPage extends Component {
                     <Modal.Title>Modal heading</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <input type="text" placeholder="How did you get here?" disabled/>
+                        <p>You must be signed in and search for a valid stock to use this function properly</p>
                     </Modal.Body>
                     <Modal.Footer>
                     <Button variant="secondary" onClick={this.handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={this.handleFormSubmit}>
+                    <Button variant="primary" onClick={this.handleFormSubmit} disabled>
                         Save Changes
                     </Button>
                     </Modal.Footer>
@@ -277,48 +301,87 @@ class GraphPage extends Component {
                     <Modal.Title>Modal heading</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <p>You selected the {this.state.modalValues.string} value of </p> 
-                        <p>Date: {this.state.modalValues.date} at {this.state.modalValues.value} for {this.state.graphInfo.symbol}</p>
-                        <input type="text" name="modalInput" placeholder="Save notes" onChange={this.handleInputChange} />
-                        {this.state.modalValues.notes ? <p> You're current notes: {this.state.modalValues.notes}</p> : "Has value"}
+                        {this.state.modalValues.title || this.state.modalValues.title ? (
+                            <div>
+                                <p> You're current notes: </p> 
+                                <h4>{this.state.modalValues.title}</h4>
+                                <p>{this.state.modalValues.body}</p>
+                            </div>
+                         ) : (
+                            <div>
+                                <p>You selected the {this.state.modalValues.string} value of </p> 
+                                <p>Date: {this.state.modalValues.date} at {this.state.modalValues.value} for {this.state.graphInfo.symbol}</p>
+                                <div className="row">
+                                    <label className="col-md-12" htmlFor="modalInputTitle">Title:</label>
+                                    <input type="text" name="modalInputTitle" placeholder="Title" onChange={this.handleInputChange}/>
+                                </div>
+                                <div className="row">
+                                    <label className="col-md-12" htmlFor="modalInputTitle">Body:</label>
+                                    <textarea rows="4" cols="50" name="modalInputBody" placeholder="Save notes" onChange={this.handleInputChange} />
+                                </div>
+                            </div>
+                         )}
                     </Modal.Body>
                     <Modal.Footer>
                     <Button variant="secondary" onClick={this.handleClose}>
                         Close
                     </Button>
                     <Button id="save-pin" variant="primary" onClick={this.handleFormSubmit}>
-                        Save Changes
+                        Save Pin
                     </Button>
                     </Modal.Footer>
                 </Modal>
         }
 
+        // if(this.state.graphInfo.pins){
+        //     <Card>
+        //         <Card.Body>
+        //             <Card.Title>TEST</Card.Title>
+        //             <Card.Text>TEXT</Card.Text>
+        //         </Card.Body>
+        //     </Card>
+        // }
+
         return (
-            <div className="container">
-                {chart}
-                {/* <ChartTest /> */}
-                {/* <!-- Here we create an HTML Form for handling the inputs--> */}
-                <form>
 
-                    {/* <!-- Here we create the text box for capturing the search term--> */}
-                    <div className="form-group">
-                        <label htmlFor="search">Search Term:</label>
-                        <input onChange={this.handleInputChange} type="text" name="search_term" className="form-control" id="search_term" placeholder="" autoFocus autoComplete="off" />
-                    </div>
+<div className="container-fluid">
+    <div className="row">
+        <div className="col-md-2">
+            <h4>Control Panel</h4>
+            <Button className="col-md-12" onClick={this.changeSetting}>
+                Change Setting
+            </Button>
+            <Button className="col-md-12" onClick={this.tester}>
+                Tester
+            </Button>
+            <Button className="col-md-12" onClick={this.handleShow}>
+                    Launch demo modal
+            </Button>
+        </div>
+        <div className="col-md-10">
+            {chart}
+            {/* <ChartTest /> */}
+            {/* <!-- Here we create an HTML Form for handling the inputs--> */}
+            <form>
 
-                    {/* <!-- Here we have our final submit button --> */}
-                    <button onClick={this.handleFormSubmit} type="submit" className="btn btn-default hvr-push" id="run-search" >Search</button>
-                    <button onClick={this.changeSetting}>Change Setting</button>
-                </form>
-                <button onClick={this.tester}>Tester</button>
-                <>
-                    <Button variant="primary" onClick={this.handleShow}>
-                        Launch demo modal
-                    </Button>
-            
-                    {modal}
-                </>
-            </div>
+                {/* <!-- Here we create the text box for capturing the search term--> */}
+                <div className="form-group">
+                    <label htmlFor="search">Search Term:</label>
+                    <input className="col-md-3 form-control" onChange={this.handleInputChange} type="text" name="search_term" id="search_term" placeholder="" autoFocus autoComplete="off" />
+                </div>
+
+                {/* <!-- Here we have our final submit button --> */}
+                <Button variant="primary" id="run-search" onClick={this.handleFormSubmit}>
+                    Search
+                </Button>
+            </form>
+
+            <>
+                {modal}
+            </>
+        </div>
+    </div>
+</div>
             
         )
     }

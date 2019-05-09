@@ -6,3 +6,21 @@ html, body{
 h2{
     text-align: center;
 }
+
+button{
+    margin-top: 2px;
+    border: 1px solid black !important;
+}
+
+input{
+    margin: 0px 15px;
+}
+
+textarea{
+    margin: 0px 15px;
+    resize: none;
+}
+
+label{
+    font-weight: bold;
+}

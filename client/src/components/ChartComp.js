@@ -9,9 +9,9 @@ class ChartComp extends Component {
             setting: "",
             //react-google-charts settings
             options: {
-                title: "Age vs. Weight comparison",
-                hAxis: { title: "Age", viewWindow: { min: 0, max: 60 } },
-                vAxis: { title: "Weight", viewWindow: { min: 0, max: 60 } },
+                title: "Results from search will appear here",
+                hAxis: { title: "Sample"},
+                vAxis: { title: "Example"},
                 pointSize: 1
             },
             rows: [
@@ -34,15 +34,19 @@ class ChartComp extends Component {
                     callback({ chartWrapper }) {
                         let x = chartWrapper.getChart().getSelection();
                         let pins = []
+                        console.log({
+                            SELECTED: x[0], 
+                            GRAPHINFO: props.graphInfo
+                        });
                         if(x[0] !== undefined && props.graphInfo !== undefined){
                             console.log(x[0]);
-                            if(props.graphInfo.pins){
+                            if(props.graphInfo.pins.length > 0){
                                 pins = props.graphInfo.pins;
                                 for(var p=0; p<pins.length; p++){
                                     console.log(x);
                                     if(pins[p].date === props.graphInfo.keys[x[0].row]){
                                         console.log("??? SUCCESS: " + pins[p].data);
-                                        props.handleShow(x[0], props.setting, pins[p].data);
+                                        props.handleShow(x[0], props.setting, {title: pins[p].title, body: pins[p].body});
                                         break;
                                     }else{
                                         console.log("!!!");
@@ -54,8 +58,9 @@ class ChartComp extends Component {
                                 console.log("Selected ", x[0]);
                                 props.handleShow(x[0], props.setting);
                             }
-                        } else {
+                        } else if(x[0] !== undefined) {
                             console.log("Selected ", x[0]);
+                            props.handleShow(x[0], props.setting);
                         }
                     }
                 }
