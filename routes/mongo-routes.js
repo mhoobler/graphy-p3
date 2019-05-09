@@ -23,11 +23,12 @@ module.exports = (app) => {
     }),
 
     app.get('/api/pin/:symbol', (req, res) => {
-        // console.log(res);
+        console.log("/api/pin/:symbol Line26");
         let symbol = req.params.symbol;
         let data = [];
 
         if(req.isAuthenticated()){
+            console.log("/api/pin/:symbol Line31")
             mongodb.SavedCharts.find({
                 user_id: req.user.id,
                 symbol: symbol

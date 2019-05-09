@@ -3,9 +3,23 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 import ChartComp from '../components/ChartComp';
-import ChartTest from '../components/ChartTest';
+// import ChartTest from '../components/ChartTest';
 
 import API from '../utils/API';
+
+// function orderPins(arr){
+//     var date = function(y, m, d){
+//         this.year = y;
+//         this.month = m;
+//         this.day = d;
+//     }
+
+//     var dates =[]
+//     for(var i=0; i<arr.length; i++){
+//         var x = arr[i].date.split('-');
+//         dates.push(new date(x[0], x[1], x[2]));
+//     }
+// }
 
 class GraphPage extends Component {
     constructor(props) {
@@ -37,10 +51,15 @@ class GraphPage extends Component {
         this.setState({ show: false });
     }
     
-    handleShow(obj, setting) {
+    handleShow(obj, setting, notes) {
         console.log(setting);
         let date = this.state.graphInfo.keys[obj.row];
         let values = this.state.graphInfo.data[date];
+        let maybeNull = null;
+
+        if(notes){
+            maybeNull = notes;
+        }
 
         if(obj){
             if(this.state.setting[0] === "high"){
@@ -50,7 +69,8 @@ class GraphPage extends Component {
                         modalValues: {
                             date: date,
                             value: values["2. high"],
-                            string: "daily high"
+                            string: "daily high",
+                            notes: maybeNull
                         },
                         show: true 
                     });
@@ -59,7 +79,8 @@ class GraphPage extends Component {
                         modalValues: {
                             date: date,
                             value: values["3. low"],
-                            string: "daily low"
+                            string: "daily low",
+                            notes: maybeNull
                         },
                         show: true 
                     });
@@ -71,7 +92,8 @@ class GraphPage extends Component {
                         modalValues: {
                             date: date,
                             value: values["1. open"],
-                            string: "opening"
+                            string: "opening",
+                            notes: maybeNull
                         },
                         show: true 
                     });
@@ -80,7 +102,8 @@ class GraphPage extends Component {
                         modalValues: {
                             date: date,
                             value: values["4. close"],
-                            string: "closing"
+                            string: "closing",
+                            notes: maybeNull
                         },
                         show: true 
                     });
@@ -191,20 +214,32 @@ class GraphPage extends Component {
 
     mongo = (alpha) => {
         let sym = alpha.data["Meta Data"]["2. Symbol"]
+        console.log("here");
+        if(this.props.user){
+            API.getPins(sym)
+            .then(res => {
+                let pinsArr = res.data;
 
-        API.getPins(sym)
-        .then(res => {
-            let pinsArr = res.data;
+                this.setState({
+                    graphInfo: {
+                        symbol: alpha.data["Meta Data"]["2. Symbol"],
+                        keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
+                        data: alpha.data["Time Series (Daily)"],
+                        pins: pinsArr
+                    }
+                })
+                console.log(this.state.graphInfo);
+            })
+            .catch(err => console.log(err));
+        }else {
             this.setState({
                 graphInfo: {
                     symbol: alpha.data["Meta Data"]["2. Symbol"],
                     keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
-                    data: alpha.data["Time Series (Daily)"],
-                    pins: pinsArr
+                    data: alpha.data["Time Series (Daily)"]
                 }
             })
-        })
-        .catch(err => console.log(err));
+        }
     }
 
     render() {
@@ -212,7 +247,7 @@ class GraphPage extends Component {
         let modal;
 
         if(this.state.graphInfo === null){
-            chart = <p>Chart will appear here after search.</p>
+            chart = <ChartComp handleShow={this.handleShow} setting={this.state.setting}/>
         } else {
             chart = <ChartComp graphInfo={this.state.graphInfo} handleShow={this.handleShow} setting={this.state.setting} key={this.state.setting}/>
         }
@@ -244,7 +279,8 @@ class GraphPage extends Component {
                     <Modal.Body>
                         <p>You selected the {this.state.modalValues.string} value of </p> 
                         <p>Date: {this.state.modalValues.date} at {this.state.modalValues.value} for {this.state.graphInfo.symbol}</p>
-                        <input type="text" name="modalInput" placeholder="Has value" onChange={this.handleInputChange} />
+                        <input type="text" name="modalInput" placeholder="Save notes" onChange={this.handleInputChange} />
+                        {this.state.modalValues.notes ? <p> You're current notes: {this.state.modalValues.notes}</p> : "Has value"}
                     </Modal.Body>
                     <Modal.Footer>
                     <Button variant="secondary" onClick={this.handleClose}>
@@ -260,7 +296,7 @@ class GraphPage extends Component {
         return (
             <div className="container">
                 {chart}
-                <ChartTest />
+                {/* <ChartTest /> */}
                 {/* <!-- Here we create an HTML Form for handling the inputs--> */}
                 <form>
 

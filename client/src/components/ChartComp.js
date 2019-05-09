@@ -12,30 +12,52 @@ class ChartComp extends Component {
                 title: "Age vs. Weight comparison",
                 hAxis: { title: "Age", viewWindow: { min: 0, max: 60 } },
                 vAxis: { title: "Weight", viewWindow: { min: 0, max: 60 } },
+                pointSize: 1
             },
             rows: [
-                [1, 3.5, 7],
-                [2, 5.5, 13],
-                [3, 5, 5],
-                [4, 7, 12],
-                [5, 12, 6],
-                [6, 14, 7]
+                [1, 3.5, 7, null],
+                [2, 5.5, 13, null],
+                [3, 5, 5, null],
+                [4, 7, 12, null],
+                [5, 12, 6, null],
+                [6, 14, 7, 'point { size: 18; shape-type: star; fill-color: #a52714; }']
             ],
             columns: [
                 {type: "string", label: "day"},
-                {type: "number", label: "high"},
-                {type: "number", label: "low"}
+                {type: "number", label: 'Test2'},
+                {type: "number", label: 'Test'},
+                {'type': 'string', 'role': 'style'}
             ],
             chartEvents: [
                 {
                     eventName: "select",
                     callback({ chartWrapper }) {
-                        let x = chartWrapper.getChart().getSelection()
-        
-                        console.log("Selected ", x[0]);
-                        props.handleShow(x[0], props.setting);
-                    }
+                        let x = chartWrapper.getChart().getSelection();
+                        let pins = []
+                        if(x[0] !== undefined && props.graphInfo !== undefined){
+                            console.log(x[0]);
+                            if(props.graphInfo.pins){
+                                pins = props.graphInfo.pins;
+                                for(var p=0; p<pins.length; p++){
+                                    console.log(x);
+                                    if(pins[p].date === props.graphInfo.keys[x[0].row]){
+                                        console.log("??? SUCCESS: " + pins[p].data);
+                                        props.handleShow(x[0], props.setting, pins[p].data);
+                                        break;
+                                    }else{
+                                        console.log("!!!");
+                                        props.handleShow(x[0], props.setting);
+                                    }
+                                }
 
+                            }else {
+                                console.log("Selected ", x[0]);
+                                props.handleShow(x[0], props.setting);
+                            }
+                        } else {
+                            console.log("Selected ", x[0]);
+                        }
+                    }
                 }
             ]
         }
@@ -43,38 +65,77 @@ class ChartComp extends Component {
     }
 
     componentDidMount() {
-        let tempRows = [];
-        let tempCol = [];
-        let keys = this.props.graphInfo.keys;
-        
-        if(this.props.setting[0] === "high"){
-            for(let i=0; i < this.props.graphInfo.keys.length; i++){
-                tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["2. high"], this.props.graphInfo.data[keys[i]]["3. low"]]);
+        if(this.props.graphInfo){
+            let pinsArr = [];
+            if(this.props.graphInfo.pins){
+                pinsArr = this.props.graphInfo.pins;
             };
-            tempCol = [
-                {type: "string", label: "day"},
-                {type: "number", label: this.props.setting[0]},
-                {type: "number", label: this.props.setting[1]}
-            ];
-        } else {
-            for(let i=0; i < this.props.graphInfo.keys.length; i++){
-                tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["1. open"], this.props.graphInfo.data[keys[i]]["4. close"]]);
-            };
-            tempCol = [
-                {type: "string", label: "day"},
-                {type: "number", label: this.props.setting[0]},
-                {type: "number", label: this.props.setting[1]}
-            ];
-        }
 
-        this.setState({
-            setting: this.props.setting,
-            options:{
-                title: this.props.graphInfo.symbol
-            },
-            rows: tempRows,
-            columns: tempCol
-        });
+            let tempRows = [];
+            let tempCol = [];
+            let keys = this.props.graphInfo.keys;
+            
+            if(this.props.setting[0] === "high"){
+                for(let i=0; i < this.props.graphInfo.keys.length; i++){
+                    let pinCounter = 0;
+                    if(pinsArr.length > 0){
+                        for(let p=0; p < pinsArr.length; p++){
+                            if(keys[i] === pinsArr[p].date){
+                                tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["2. high"], this.props.graphInfo.data[keys[i]]["3. low"], 'point { size: 18; shape-type: star; fill-color: #a52714; }']);
+                            } else {
+                                pinCounter++
+                            }
+                        }
+                        if(pinCounter == pinsArr.length){
+                            tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["2. high"], this.props.graphInfo.data[keys[i]]["3. low"], null]);
+                        }
+                    }else{
+                        tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["2. high"], this.props.graphInfo.data[keys[i]]["3. low"], null]);
+                    }
+                };
+                tempCol = [
+                    {type: "string", label: "day"},
+                    {type: "number", label: this.props.setting[0]},
+                    {type: "number", label: this.props.setting[1]},
+                    {'type': 'string', 'role': 'style'}
+                ];
+            } else {
+                for(let i=0; i < this.props.graphInfo.keys.length; i++){
+                    let pinCounter = 0;
+                    if(pinsArr.length > 0){
+                        for(let p=0; p < pinsArr.length; p++){
+                            if(keys[i] === pinsArr[p].date){
+                                tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["1. open"], this.props.graphInfo.data[keys[i]]["4. close"], 'point { size: 18; shape-type: star; fill-color: #a52714; }']);
+                            }else{
+                                pinCounter++;
+                            }
+                        }
+                        if(pinCounter == pinsArr.length){
+                            tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["1. open"], this.props.graphInfo.data[keys[i]]["4. close"], null]);
+                        }
+                    }else{
+                        tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["1. open"], this.props.graphInfo.data[keys[i]]["4. close"], null]);
+                    }
+                };
+                tempCol = [
+                    {type: "string", label: "day"},
+                    {type: "number", label: this.props.setting[0]},
+                    {type: "number", label: this.props.setting[1]},
+                    {'type': 'string', 'role': 'style'}
+                ];
+            }
+            console.log(tempRows);
+
+            this.setState({
+                setting: this.props.setting,
+                options:{
+                    title: this.props.graphInfo.symbol,
+                    pointSize: 1
+                },
+                rows: tempRows,
+                columns: tempCol
+            });
+        }
     }
 
     render(){
