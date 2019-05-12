@@ -248,41 +248,41 @@ class GraphPage extends Component {
     mongo = (alpha) => {
         let sym = alpha.data["Meta Data"]["2. Symbol"]
         console.log("graphPage mongo function");
-        // if(this.props.user){
-        //     API.getPins(sym)
-        //     .then(res => {
-        //         let pinsArr = res.data;
+        if(this.props.user){
+            API.getPins(sym)
+            .then(res => {
+                let pinsArr = res.data;
 
-        //         this.setState({
-        //             graphInfo: {
-        //                 symbol: alpha.data["Meta Data"]["2. Symbol"],
-        //                 keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
-        //                 data: alpha.data["Time Series (Daily)"],
-        //                 pins: pinsArr
-        //             }
-        //         });
-        //         console.log(this.state.graphInfo);
-        //     })
-        //     .catch(err => console.log(err));
-        // }else {
-        //     this.setState({
-        //         graphInfo: {
-        //             symbol: alpha.data["Meta Data"]["2. Symbol"],
-        //             keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
-        //             data: alpha.data["Time Series (Daily)"],
-        //             pins: []
-        //         }
-        //     });
-        // }
+                this.setState({
+                    graphInfo: {
+                        symbol: alpha.data["Meta Data"]["2. Symbol"],
+                        keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
+                        data: alpha.data["Time Series (Daily)"],
+                        pins: pinsArr
+                    }
+                });
+                console.log(this.state.graphInfo);
+            })
+            .catch(err => console.log(err));
+        }else {
+            this.setState({
+                graphInfo: {
+                    symbol: alpha.data["Meta Data"]["2. Symbol"],
+                    keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
+                    data: alpha.data["Time Series (Daily)"],
+                    pins: []
+                }
+            });
+        }
 
-        this.setState({
-            graphInfo: {
-                symbol: alpha.data["Meta Data"]["2. Symbol"],
-                keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
-                data: alpha.data["Time Series (Daily)"],
-                pins: []
-            }
-        });
+        // this.setState({
+        //     graphInfo: {
+        //         symbol: alpha.data["Meta Data"]["2. Symbol"],
+        //         keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
+        //         data: alpha.data["Time Series (Daily)"],
+        //         pins: []
+        //     }
+        // });
     }
 
     render() {
