@@ -56,7 +56,7 @@ app.get("*", function(req, res) {
 
 var syncOptions = { force: false };
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/reactreadinglist2", {useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/graphy-p3", {useNewUrlParser: true});
 
 // reset tables
 //let syncOptions = { force: process.env.NODE_ENV === 'development' ? true : false };

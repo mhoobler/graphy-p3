@@ -208,6 +208,13 @@ class GraphPage extends Component {
                     date: this.state.modalValues.date
                 }
             }
+            console.log({
+                symbol: sending.symbol,
+                title: sending.title,
+                body: sending.body,
+                user_id: sending.user_id,
+                date: sending.date
+            })
             API.postPin(sending)
             .then(res => console.log(res))
             .catch(err => console.log(err));
@@ -238,7 +245,7 @@ class GraphPage extends Component {
 
     mongo = (alpha) => {
         let sym = alpha.data["Meta Data"]["2. Symbol"]
-        console.log("here");
+        console.log("graphPage mongo function");
         if(this.props.user){
             API.getPins(sym)
             .then(res => {

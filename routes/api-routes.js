@@ -5,10 +5,10 @@ const https = require('https');
 module.exports = (app, passport) => {
     //TEST AREA
     app.get('/api/test', (req, res) => {
-        // res.json(true);
-        mongodb.Book.find({})
-        .then(result => res.json(result))
-        .catch(err => res.status(422).json(err))
+        res.json(true);
+        // mongodb.Book.find({})
+        // .then(result => res.json(result))
+        // .catch(err => res.status(422).json(err))
     })
 
     app.get('/getUser', (req, res) => {

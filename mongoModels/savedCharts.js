@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const savedChartsSchema = new Schema({
   symbol: { type: String, required: true },
-  data: { type: String },
+  title: { type: String },
+  body:  { type: String },
   user_id: Number,
   date: { type: String }
 });
