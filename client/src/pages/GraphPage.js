@@ -260,7 +260,8 @@ class GraphPage extends Component {
                 graphInfo: {
                     symbol: alpha.data["Meta Data"]["2. Symbol"],
                     keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
-                    data: alpha.data["Time Series (Daily)"]
+                    data: alpha.data["Time Series (Daily)"],
+                    pins:[]
                 }
             })
         }
