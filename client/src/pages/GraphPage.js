@@ -71,6 +71,7 @@ class GraphPage extends Component {
             body = notes.body;
         }
 
+        //modal values handler
         if(obj){
             if(this.state.setting[0] === "high"){
                 if(obj.column === 1){
@@ -151,10 +152,11 @@ class GraphPage extends Component {
     handleFormSubmit = event => {
         event.preventDefault();
 
-        //for searching stocks
+        //if search button for chart is clicked
         if(event.target.id === "run-search"){
         console.log(this.state.search_term);
 
+        //Api calls for loading chart
         //Check for ticker
         API.apiTicker(this.state.search_term)
         .then( result => {
@@ -188,7 +190,7 @@ class GraphPage extends Component {
             }
         }).catch(err => console.log(err));
 
-        //save pin
+        //if save button for modal is clicked
         } else if(event.target.id === "save-pin"){
             let sending = {};
             if(!this.props.user){
@@ -268,7 +270,7 @@ class GraphPage extends Component {
                     symbol: alpha.data["Meta Data"]["2. Symbol"],
                     keys: Object.keys(alpha.data["Time Series (Daily)"]).reverse(),
                     data: alpha.data["Time Series (Daily)"],
-                    pins:[]
+                    pins: []
                 }
             })
         }
