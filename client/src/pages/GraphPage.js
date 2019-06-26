@@ -65,10 +65,12 @@ class GraphPage extends Component {
         let values = this.state.graphInfo.data[date];
         let title = null;
         let body = null;
+        let id = null;
 
         if(notes){
             title = notes.title;
             body = notes.body;
+            id = notes.id;
         }
 
         //modal values handler
@@ -82,7 +84,8 @@ class GraphPage extends Component {
                             value: values["2. high"],
                             string: "daily high",
                             title: title,
-                            body: body
+                            body: body,
+                            id: id
                         },
                         show: true 
                     });
@@ -93,7 +96,8 @@ class GraphPage extends Component {
                             value: values["3. low"],
                             string: "daily low",
                             title: title,
-                            body: body
+                            body: body,
+                            id: id
                         },
                         show: true 
                     });
@@ -107,7 +111,8 @@ class GraphPage extends Component {
                             value: values["1. open"],
                             string: "opening",
                             title: title,
-                            body: body
+                            body: body,
+                            id: id
                         },
                         show: true 
                     });
@@ -118,7 +123,8 @@ class GraphPage extends Component {
                             value: values["4. close"],
                             string: "closing",
                             title: title,
-                            body: body
+                            body: body,
+                            id: id
                         },
                         show: true 
                     });
@@ -135,12 +141,6 @@ class GraphPage extends Component {
     }
     }
 
-    componentDidMount() {
-        API.apiTest()
-        .then( (res) => console.log(res))
-        .catch( (err) => console.log(err));
-    };
-
     handleInputChange = event => {
         const { name, value } = event.target;
         console.log(name + value)
@@ -153,47 +153,59 @@ class GraphPage extends Component {
         event.preventDefault();
 
         //if search button for chart is clicked
-        if(event.target.id === "run-search"){
-        console.log(this.state.search_term);
-
-        //Api calls for loading chart
-        //Check for ticker
-        API.apiTicker(this.state.search_term)
-        .then( result => {
-            if(result.data.length > 0){
-                console.log(result.data[0]);
-                //Make AlphaApi Call
-                API.apiAlpha(result.data[0].symbol)
-                .then(result => {
-                    console.log(result)
-                    this.mongo(result);
-                })
-                .catch(err => console.log(err));
-            }else{
-                //Check for name
-                API.apiName(this.state.search_term)
-                .then(result => {
-                    if(result.data.length > 0){
-                        console.log(result.data[0].symbol);
-                        //Make AlphaApi call
-                        API.apiAlpha(result.data[0].symbol)
-                        .then(result => {
-                            console.log(result)
-                            this.mongo(result);
-                        })
-                        .catch(err => console.log(err));
-                    }else{
-                        //All checks failed
-                        console.log("no results");
-                    }
-                }).catch(err => console.log(err));
+        if(event.target.id === "run-search")
+        {
+            if(this.state.search_term === "")
+            {
+                console.log("ER")
             }
-        }).catch(err => console.log(err));
+            console.log(this.state.search_term);
+
+            //Api calls for loading chart
+            //Check for ticker
+            API.apiTicker(this.state.search_term)
+            .then( result => 
+            {
+                if(result.data.length > 0)
+                {
+                    console.log(result.data[0]);
+                    //Make AlphaApi Call
+                    API.apiAlpha(result.data[0].symbol)
+                    .then(result => {
+                        console.log(result)
+                        this.mongo(result);
+                    })
+                    .catch(err => console.log(err));
+                }
+                else
+                {
+                    //Check for name
+                    API.apiName(this.state.search_term)
+                    .then(result => {
+                        if(result.data.length > 0){
+                            console.log(result.data[0].symbol);
+                            //Make AlphaApi call
+                            API.apiAlpha(result.data[0].symbol)
+                            .then(result => {
+                                console.log(result)
+                                this.mongo(result);
+                            })
+                            .catch(err => console.log(err));
+                        }else{
+                            //All checks failed
+                            console.log("no results");
+                        }
+                    }).catch(err => console.log(err));
+                }
+            }).catch(err => console.log(err));
 
         //if save button for modal is clicked
-        } else if(event.target.id === "save-pin"){
+        }
+        else if(event.target.id === "save-pin")
+        {
             let sending = {};
-            if(!this.props.user){
+            if(!this.props.user)
+            {
                 sending = {
                     symbol: this.state.graphInfo.symbol,
                     title: this.state.modalInputTitle,
@@ -201,7 +213,8 @@ class GraphPage extends Component {
                     user_id: 0,
                     date: this.state.modalValues.date
                 }
-            } else {
+            } else 
+            {
                 sending = {
                     symbol: this.state.graphInfo.symbol,
                     title: this.state.modalInputTitle,
@@ -325,6 +338,7 @@ class GraphPage extends Component {
                                 <p> You're current notes: </p> 
                                 <h4>{this.state.modalValues.title}</h4>
                                 <p>{this.state.modalValues.body}</p>
+                                <p>{this.state.modalValues.id}</p>
                             </div>
                          ) : (
                             <div>
@@ -352,14 +366,6 @@ class GraphPage extends Component {
                 </Modal>
         }
 
-        // if(this.state.graphInfo.pins){
-        //     <Card>
-        //         <Card.Body>
-        //             <Card.Title>TEST</Card.Title>
-        //             <Card.Text>TEXT</Card.Text>
-        //         </Card.Body>
-        //     </Card>
-        // }
 
         return (
 
@@ -379,14 +385,11 @@ class GraphPage extends Component {
         </div>
         <div className="col-md-10">
             {chart}
-            {/* <ChartTest /> */}
-            {/* <!-- Here we create an HTML Form for handling the inputs--> */}
-            <form>
 
-                {/* <!-- Here we create the text box for capturing the search term--> */}
+            <form>
                 <div className="form-group">
                     <label htmlFor="search">Search Term:</label>
-                    <input className="col-md-3 form-control" onChange={this.handleInputChange} type="text" name="search_term" id="search_term" placeholder="" autoFocus autoComplete="off" />
+                    <input className="col-md-3 form-control" onChange={this.handleInputChange} type="text" name="search_term" id="search_term" placeholder="" autoFocus autoComplete="off" required/>
                 </div>
 
                 {/* <!-- Here we have our final submit button --> */}

@@ -12,14 +12,18 @@ module.exports = (app, passport) => {
     })
 
     app.get('/getUser', (req, res) => {
-        if (req.isAuthenticated()) {
-            db.User.findByPk(req.user.id).then(function(dbUser) {
+
+        //chane this back for passport to work "req.user.id" @ "2"
+        // if (req.isAuthenticated()) {
+            db.User.findByPk(2)
+            .then(function(dbUser) {
               console.log(dbUser);
               res.json(dbUser);
             })
-        } else {
-            res.json(null);
-        }
+            .catch(err => console.log(err));
+        // } else {
+        //     res.json(null);
+        // }
     });
     //TEST AREA
 

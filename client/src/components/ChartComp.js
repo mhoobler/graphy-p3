@@ -45,11 +45,11 @@ class ChartComp extends Component {
                                 for(var p=0; p<pins.length; p++){
                                     console.log(x);
                                     if(pins[p].date === props.graphInfo.keys[x[0].row]){
-                                        console.log("??? SUCCESS: " + pins[p].data);
-                                        props.handleShow(x[0], props.setting, {title: pins[p].title, body: pins[p].body});
+                                        console.log("Pin found: " + pins[p]._id);
+                                        props.handleShow(x[0], props.setting, {title: pins[p].title, body: pins[p].body, id: pins[p]._id});
                                         break;
                                     }else{
-                                        console.log("!!!");
+                                        console.log("Pin not found");
                                         props.handleShow(x[0], props.setting);
                                     }
                                 }
@@ -91,7 +91,7 @@ class ChartComp extends Component {
                                 pinCounter++
                             }
                         }
-                        if(pinCounter == pinsArr.length){
+                        if(pinCounter === pinsArr.length){
                             tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["2. high"], this.props.graphInfo.data[keys[i]]["3. low"], null]);
                         }
                     }else{
@@ -115,7 +115,7 @@ class ChartComp extends Component {
                                 pinCounter++;
                             }
                         }
-                        if(pinCounter == pinsArr.length){
+                        if(pinCounter === pinsArr.length){
                             tempRows.push([keys[i], this.props.graphInfo.data[keys[i]]["1. open"], this.props.graphInfo.data[keys[i]]["4. close"], null]);
                         }
                     }else{

@@ -28,9 +28,6 @@ function Nav(props) {
                 <img src={Logo} className="App-logo" alt="logo" />
             </Link>
             
-            <Link to={"./projects"}>
-                Projects
-            </Link>
             <Link to={"./graphs"}>
                 Graphs
             </Link>

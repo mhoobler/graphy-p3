@@ -5,11 +5,6 @@ import API from '../utils/API';
 
 class Home extends Component {
 
-    componentDidMount() {
-        API.apiTest()
-        .then( (res) => console.log(res))
-        .catch( (err) => console.log(err));
-    }
     render() {
         return (
             <div className="App">

@@ -24,3 +24,7 @@ textarea{
 label{
     font-weight: bold;
 }
+
+#search_term{
+    margin: 0 0;
+}

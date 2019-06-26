@@ -12,7 +12,10 @@ import GraphPage from './pages/GraphPage';
 
 class App extends Component {
   state = {
-    user: null
+    user: {
+      email: "test2@gmail.com",
+      id: 2
+    }
   }
 
   setUser = (userInfo) => {

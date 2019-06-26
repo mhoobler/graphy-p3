@@ -2,9 +2,9 @@ var axios = require('axios');
 
 export default {
     // TESTS
-    apiTest: () => {
-        return axios.get('/api/test');
-    },
+    // apiTest: () => {
+    //     return axios.get('/api/test');
+    // },
     getUser: () => {
         return axios.get('/getUser');
     },

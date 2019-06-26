@@ -27,10 +27,11 @@ module.exports = (app) => {
         let symbol = req.params.symbol;
         let data = [];
 
-        if(req.isAuthenticated()){
+        //chane this back for passport to work "req.user.id" @ 2
+        // if(req.isAuthenticated()){
             console.log("/api/pin/:symbol Line31")
             mongodb.SavedCharts.find({
-                user_id: req.user.id,
+                user_id: 2,
                 symbol: symbol
             })
             .then(result => {
@@ -38,6 +39,6 @@ module.exports = (app) => {
                 res.json(result);
             })
             .catch(err => console.log(err));
-        }
+        // }
     })
 }
